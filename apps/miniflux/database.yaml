@@ -1,0 +1,21 @@
+# Three instances: one primary, two streaming replicas, spread over the
+# workers. CNPG creates Secret "miniflux-db-app" (key "uri") for the app.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: miniflux-db
+spec:
+  instances: 3
+  storage:
+    storageClass: local-path
+    size: 2Gi
+  bootstrap:
+    initdb:
+      database: miniflux
+      owner: miniflux
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      memory: 512Mi

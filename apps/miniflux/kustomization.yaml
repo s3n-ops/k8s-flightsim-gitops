@@ -1,0 +1,14 @@
+# Miniflux (Go) with its own PostgreSQL cluster (CloudNativePG).
+#
+# Not in git: Secret "miniflux-admin" with ADMIN_USERNAME and
+# ADMIN_PASSWORD. The lab repo creates it (just secrets).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: miniflux
+labels:
+  - pairs:
+      app.kubernetes.io/part-of: miniflux
+resources:
+  - database.yaml
+  - deployment.yaml
+  - service.yaml

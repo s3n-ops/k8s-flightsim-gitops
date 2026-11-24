@@ -1,0 +1,8 @@
+# Argo CD itself. Installed once by hand (just argocd in the lab repo):
+#   kubectl apply --server-side -k bootstrap/argocd
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: argocd
+resources:
+  - namespace.yaml
+  - https://raw.githubusercontent.com/argoproj/argo-cd/v3.6.1/manifests/install.yaml
