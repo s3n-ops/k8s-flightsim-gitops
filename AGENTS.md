@@ -63,20 +63,19 @@ not here.
 
 ## Git Commits
 
-This repository has **direct commits on `main`**, no pull requests. Every
-commit is a deployment step: Argo CD applies it after the push.
+This repository uses **trunk-based development with squash merges**. `main`
+changes only through pull requests; Argo CD applies each merge.
 
-- Commit locally under the user's own credentials. **Never** push. The user
-  pushes.
-- **Never** rewrite history: no amend of pushed commits, no rebase, no force
-  push. Undo a change with `git revert`.
+- Work on a branch `release/YYYY-MM-DD-topic` from the current
+  `origin/main`, with exactly one commit. Commit locally under the user's
+  own credentials. **Never** push and never open or merge a pull request:
+  the user does that.
+- **Never** rewrite pushed history: no amend, no rebase of `main`, no force
+  push. Undo a change with a pull request that holds `git revert`.
 - Commit messages describe the change, not the tools used to make it: no
-  `Co-Authored-By` trailer, no "Generated with" line, no tool names. The use
-  of AI is disclosed openly in the README section "AI Disclosure", which
-  applies to every commit. Repeating it in each commit would add no
-  information about the change.
-- Commits that break the cluster on purpose for a training scenario start
-  with `Scenario`.
+  `Co-Authored-By` trailer, no "Generated with" line, no tool names.
+- Pull requests that break the cluster on purpose for a training scenario
+  start with `Scenario`.
 
 Before staging, check the diff for secrets and host-specific paths. If you
 find one, name what and where, never the value, and stop.
