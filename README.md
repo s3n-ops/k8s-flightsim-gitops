@@ -20,11 +20,15 @@ apps/              Applications
 
 | Application | Project | Source | Sync wave |
 |---|---|---|---|
-| local-path-provisioner | platform | `platform/local-path-provisioner` (v0.0.37) | -10 |
-| cert-manager | platform | Helm chart v1.21.3 | -8 |
+| local-path-provisioner | platform | upstream manifest via `platform/local-path-provisioner` | -10 |
+| cert-manager | platform | Jetstack Helm chart | -8 |
 | cert-manager-issuers | platform | `platform/cert-manager-issuers` (ClusterIssuer `lab-ca`) | -7 |
-| cloudnative-pg | platform | Helm chart 0.29.1 | -5 |
-| miniflux | apps | `apps/miniflux` (Miniflux 2.3.5, PostgreSQL with 3 instances) | 0 |
+| cloudnative-pg | platform | CloudNativePG Helm chart | -5 |
+| miniflux | apps | `apps/miniflux` (Miniflux, PostgreSQL with 3 instances) | 0 |
+
+Every version is pinned in exactly one place: `targetRevision` in
+`applications/*.yaml` for Helm charts, the URL or image tag in the
+manifests under `platform/` and `apps/`. This README names no versions.
 
 ## Projects
 
