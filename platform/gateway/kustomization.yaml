@@ -6,3 +6,4 @@ resources:
   - certificates.yaml
   - gateway.yaml
   - redirect.yaml
+  - argocd-route.yaml
