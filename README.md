@@ -11,18 +11,33 @@ and runbooks live in the lab repository.
 
 ```
 bootstrap/
-  argocd/          Argo CD itself (applied once with kubectl)
+  argocd/          Argo CD itself and its projects (applied with kubectl)
   root.yaml        App of apps: manages everything in applications/
 applications/      One Argo CD Application per component
 platform/          Cluster services (storage, operators)
 apps/              Applications
 ```
 
-| Application | Source | Sync wave |
-|---|---|---|
-| local-path-provisioner | `platform/local-path-provisioner` (v0.0.37) | -10 |
-| cloudnative-pg | Helm chart 0.29.1 | -5 |
-| miniflux | `apps/miniflux` (Miniflux 2.3.5, PostgreSQL with 3 instances) | 0 |
+| Application | Project | Source | Sync wave |
+|---|---|---|---|
+| local-path-provisioner | platform | `platform/local-path-provisioner` (v0.0.37) | -10 |
+| cloudnative-pg | platform | Helm chart 0.29.1 | -5 |
+| miniflux | apps | `apps/miniflux` (Miniflux 2.3.5, PostgreSQL with 3 instances) | 0 |
+
+## Projects
+
+`bootstrap/argocd/projects.yaml` defines two Argo CD projects. Every
+Application must name one of them; the `default` project allows nothing.
+
+| Project | Sources | Destinations | Cluster-scoped resources |
+|---|---|---|---|
+| platform | this repository, CloudNativePG charts | `argocd`, `local-path-storage`, `cnpg-system` | Namespace, CRDs, webhooks, ClusterRoles, StorageClass |
+| apps | this repository | `miniflux` | Namespace only |
+
+The projects are applied with Argo CD itself, not by the app of apps. A
+change to them takes effect only after `just argocd` in the lab repository,
+so a push here cannot widen its own rights. A new application namespace
+needs an entry under `destinations` of `apps`.
 
 ## Secrets
 

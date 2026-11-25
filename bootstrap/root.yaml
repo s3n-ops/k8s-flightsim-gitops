@@ -5,7 +5,7 @@ metadata:
   name: root
   namespace: argocd
 spec:
-  project: default
+  project: platform
   source:
     repoURL: https://github.com/s3n-ops/k8s-flightsim-gitops.git
     targetRevision: main
