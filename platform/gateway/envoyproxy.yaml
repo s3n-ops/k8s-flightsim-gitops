@@ -12,5 +12,10 @@ spec:
         replicas: 2
       envoyService:
         type: LoadBalancer
+        # kube-vip runs on the control plane only, Envoy on the workers. With
+        # the default "Local" policy no node would announce the IP. "Cluster"
+        # lets the announcing node forward; Envoy then sees the node IP, not
+        # the client IP.
+        externalTrafficPolicy: Cluster
         annotations:
           kube-vip.io/loadbalancerIPs: 10.17.3.100
