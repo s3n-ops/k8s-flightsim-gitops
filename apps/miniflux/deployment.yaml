@@ -27,6 +27,8 @@ spec:
           env:
             - name: LISTEN_ADDR
               value: "0.0.0.0:8080"
+            - name: BASE_URL
+              value: https://miniflux.k8s-flightsim.internal/
             - name: RUN_MIGRATIONS
               value: "1"
             - name: CREATE_ADMIN

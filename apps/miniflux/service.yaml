@@ -1,14 +1,13 @@
-# NodePort until there is an ingress: http://<any node IP>:30080
+# Reached through the lab Gateway: https://miniflux.k8s-flightsim.internal
 apiVersion: v1
 kind: Service
 metadata:
   name: miniflux
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app.kubernetes.io/name: miniflux
   ports:
     - name: http
       port: 80
       targetPort: http
-      nodePort: 30080

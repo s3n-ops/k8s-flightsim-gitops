@@ -9,3 +9,25 @@ resources:
   - namespace.yaml
   - https://raw.githubusercontent.com/argoproj/argo-cd/v3.6.1/manifests/ha/install.yaml
   - projects.yaml
+patches:
+  # TLS ends at the lab Gateway, argocd-server serves plain HTTP behind it.
+  - target:
+      kind: ConfigMap
+      name: argocd-cmd-params-cm
+    patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: argocd-cmd-params-cm
+      data:
+        server.insecure: "true"
+  - target:
+      kind: ConfigMap
+      name: argocd-cm
+    patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: argocd-cm
+      data:
+        url: https://argocd.k8s-flightsim.internal
