@@ -60,6 +60,14 @@ Envoy Gateway) on `10.17.3.100`. The lab DNS resolves every name under
 - Port 80 only redirects to HTTPS.
 - A new application needs a listener, a certificate and an `HTTPRoute`.
 
+## Changes
+
+`main` is protected. Every change is a short-lived branch and a pull
+request, merged with squash after the `validate` check passes
+(`.github/workflows/validate.yml`: Kustomize render and kubeconform against
+pinned Kubernetes and CRD schemas). Argo CD applies each merge. Details in
+[`GITHUB_RELEASE_POLICY.md`](GITHUB_RELEASE_POLICY.md).
+
 ## Secrets
 
 No secrets in this repository, not even encrypted ones. The lab repository

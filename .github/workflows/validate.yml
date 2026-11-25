@@ -1,0 +1,58 @@
+# Validates every manifest before it reaches main: renders all Kustomize
+# directories and checks each object against the Kubernetes schemas and the
+# schemas of the CRDs in use (Argo CD, cert-manager, Gateway API, Envoy
+# Gateway, CloudNativePG). Helm charts are rendered by Argo CD and are not
+# checked here; their Application objects are.
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  KUBERNETES_VERSION: 1.36.0
+  KUBECONFORM_VERSION: v0.8.0
+  KUBECONFORM_SHA256: 9bc2bffbf71f261128533edaf912153948b7ff238f9a531ae6d34466ec287883
+  # Schema repositories, pinned to commits.
+  K8S_SCHEMAS: https://raw.githubusercontent.com/yannh/kubernetes-json-schema/9367d1ce1c88b8bbf6ee06d0e80510f26394913f
+  CRD_SCHEMAS: https://raw.githubusercontent.com/datreeio/CRDs-catalog/49729e49e8f062933e3716a26540d41b0cd0856c
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install kubeconform
+        run: |
+          curl -fsSLo kubeconform.tar.gz \
+            "https://github.com/yannh/kubeconform/releases/download/${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz"
+          echo "${KUBECONFORM_SHA256}  kubeconform.tar.gz" | sha256sum --check
+          tar -xzf kubeconform.tar.gz kubeconform
+          sudo install -m 0755 kubeconform /usr/local/bin/kubeconform
+
+      - name: Render Kustomize directories
+        run: |
+          mkdir -p rendered
+          find . -name kustomization.yaml -not -path './.git/*' -printf '%h\n' | sort | while read -r dir; do
+            echo "kustomize build ${dir}"
+            kubectl kustomize "${dir}" > "rendered/$(echo "${dir#./}" | tr / _).yaml"
+          done
+
+      # CustomResourceDefinition objects come from upstream manifests (Argo CD)
+      # and have no schema of their own in the catalog, so they are skipped.
+      - name: Validate manifests
+        run: |
+          kubeconform -strict -summary -output text \
+            -skip CustomResourceDefinition \
+            -kubernetes-version "${KUBERNETES_VERSION}" \
+            -schema-location "${K8S_SCHEMAS}/{{.NormalizedKubernetesVersion}}-standalone{{.StrictSuffix}}/{{.ResourceKind}}{{.KindSuffix}}.json" \
+            -schema-location "${CRD_SCHEMAS}/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json" \
+            rendered/ applications/ bootstrap/root.yaml
