@@ -1,0 +1,16 @@
+# Settings for the Envoy pods behind the lab Gateway. kube-vip announces the
+# LoadBalancer IP via ARP; *.k8s-flightsim.internal resolves to it.
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: lab
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyDeployment:
+        replicas: 2
+      envoyService:
+        type: LoadBalancer
+        annotations:
+          kube-vip.io/loadbalancerIPs: 10.17.3.100

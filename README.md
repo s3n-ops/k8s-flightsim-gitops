@@ -23,7 +23,9 @@ apps/              Applications
 | local-path-provisioner | platform | upstream manifest via `platform/local-path-provisioner` | -10 |
 | cert-manager | platform | Jetstack Helm chart | -8 |
 | cert-manager-issuers | platform | `platform/cert-manager-issuers` (ClusterIssuer `lab-ca`) | -7 |
+| envoy-gateway | platform | Envoy Gateway Helm chart (OCI), includes the Gateway API CRDs | -6 |
 | cloudnative-pg | platform | CloudNativePG Helm chart | -5 |
+| gateway | platform | `platform/gateway` (GatewayClass, Gateway `lab`, certificates) | -4 |
 | miniflux | apps | `apps/miniflux` (Miniflux, PostgreSQL with 3 instances) | 0 |
 
 Every version is pinned in exactly one place: `targetRevision` in
@@ -37,13 +39,26 @@ Application must name one of them; the `default` project allows nothing.
 
 | Project | Sources | Destinations | Cluster-scoped resources |
 |---|---|---|---|
-| platform | this repository, CloudNativePG and Jetstack charts | `argocd`, `local-path-storage`, `cnpg-system`, `cert-manager` | Namespace, CRDs, webhooks, ClusterRoles, StorageClass, ClusterIssuer |
+| platform | this repository, CloudNativePG, Jetstack and Envoy Gateway charts | `argocd`, `local-path-storage`, `cnpg-system`, `cert-manager`, `envoy-gateway-system`, `gateway` | Namespace, CRDs, webhooks, ClusterRoles, StorageClass, ClusterIssuer, GatewayClass |
 | apps | this repository | `miniflux` | Namespace only |
 
 The projects are applied with Argo CD itself, not by the app of apps. A
 change to them takes effect only after `just argocd` in the lab repository,
 so a push here cannot widen its own rights. A new application namespace
 needs an entry under `destinations` of `apps`.
+
+## Gateway
+
+All web traffic enters through one Gateway API `Gateway` (`gateway/lab`,
+Envoy Gateway) on `10.17.3.100`. The lab DNS resolves every name under
+`k8s-flightsim.internal` to that address.
+
+- One HTTPS listener per hostname, each with its own certificate from the
+  ClusterIssuer `lab-ca`. No wildcard certificate.
+- Each listener names the namespaces that may attach routes; any other
+  namespace is refused.
+- Port 80 only redirects to HTTPS.
+- A new application needs a listener, a certificate and an `HTTPRoute`.
 
 ## Secrets
 

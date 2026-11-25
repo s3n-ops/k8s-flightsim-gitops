@@ -1,0 +1,46 @@
+# The single entry point of the lab. One HTTPS listener per hostname, each
+# with its own certificate and its own list of namespaces that may attach
+# routes. Names without a listener get no TLS handshake.
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: lab
+spec:
+  gatewayClassName: envoy
+  listeners:
+    # Plain HTTP only redirects to HTTPS (redirect.yaml).
+    - name: http
+      protocol: HTTP
+      port: 80
+      hostname: "*.k8s-flightsim.internal"
+      allowedRoutes:
+        namespaces:
+          from: Same
+    - name: https-argocd
+      protocol: HTTPS
+      port: 443
+      hostname: argocd.k8s-flightsim.internal
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: argocd-tls
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              kubernetes.io/metadata.name: argocd
+    - name: https-miniflux
+      protocol: HTTPS
+      port: 443
+      hostname: miniflux.k8s-flightsim.internal
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: miniflux-tls
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              kubernetes.io/metadata.name: miniflux

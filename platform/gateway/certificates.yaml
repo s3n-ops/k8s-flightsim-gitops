@@ -1,0 +1,33 @@
+# One certificate per hostname, no wildcard: a leaked key exposes one name,
+# not the whole domain. cert-manager renews them before they expire.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: argocd
+spec:
+  secretName: argocd-tls
+  dnsNames:
+    - argocd.k8s-flightsim.internal
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Always
+  issuerRef:
+    name: lab-ca
+    kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: miniflux
+spec:
+  secretName: miniflux-tls
+  dnsNames:
+    - miniflux.k8s-flightsim.internal
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Always
+  issuerRef:
+    name: lab-ca
+    kind: ClusterIssuer
