@@ -21,6 +21,8 @@ apps/              Applications
 | Application | Project | Source | Sync wave |
 |---|---|---|---|
 | local-path-provisioner | platform | `platform/local-path-provisioner` (v0.0.37) | -10 |
+| cert-manager | platform | Helm chart v1.21.3 | -8 |
+| cert-manager-issuers | platform | `platform/cert-manager-issuers` (ClusterIssuer `lab-ca`) | -7 |
 | cloudnative-pg | platform | Helm chart 0.29.1 | -5 |
 | miniflux | apps | `apps/miniflux` (Miniflux 2.3.5, PostgreSQL with 3 instances) | 0 |
 
@@ -31,7 +33,7 @@ Application must name one of them; the `default` project allows nothing.
 
 | Project | Sources | Destinations | Cluster-scoped resources |
 |---|---|---|---|
-| platform | this repository, CloudNativePG charts | `argocd`, `local-path-storage`, `cnpg-system` | Namespace, CRDs, webhooks, ClusterRoles, StorageClass |
+| platform | this repository, CloudNativePG and Jetstack charts | `argocd`, `local-path-storage`, `cnpg-system`, `cert-manager` | Namespace, CRDs, webhooks, ClusterRoles, StorageClass, ClusterIssuer |
 | apps | this repository | `miniflux` | Namespace only |
 
 The projects are applied with Argo CD itself, not by the app of apps. A
@@ -49,6 +51,7 @@ by name only.
 |---|---|---|---|
 | `miniflux-admin` | miniflux | `ADMIN_USERNAME`, `ADMIN_PASSWORD` | `just secrets` |
 | `miniflux-db-app` | miniflux | `uri` and others | created by CloudNativePG |
+| `lab-intermediate-ca` | cert-manager | `tls.crt` (intermediate and root), `tls.key` | `just secrets`; the root key never enters the cluster |
 
 ## Bootstrap
 

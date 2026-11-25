@@ -1,0 +1,11 @@
+# Issues server certificates from the lab intermediate CA. The Secret
+# lab-intermediate-ca (tls.crt: intermediate and root, tls.key) is not in
+# git: the lab repository creates it with `just secrets`. The root key
+# never reaches the cluster.
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: lab-ca
+spec:
+  ca:
+    secretName: lab-intermediate-ca

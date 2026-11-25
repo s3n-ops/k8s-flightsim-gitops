@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager-issuers
+  namespace: argocd
+  annotations:
+    # After cert-manager: the ClusterIssuer CRD must exist.
+    argocd.argoproj.io/sync-wave: "-7"
+spec:
+  project: platform
+  source:
+    repoURL: https://github.com/s3n-ops/k8s-flightsim-gitops.git
+    targetRevision: main
+    path: platform/cert-manager-issuers
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cert-manager
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - SkipDryRunOnMissingResource=true
