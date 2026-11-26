@@ -13,3 +13,8 @@ resources:
   - deployment.yaml
   - service.yaml
   - route.yaml
+  - import-feeds.yaml
+configMapGenerator:
+  - name: miniflux-feeds
+    files:
+      - feeds.opml
