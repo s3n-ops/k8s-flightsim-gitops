@@ -14,8 +14,12 @@ spec:
   template:
     spec:
       restartPolicy: Never
+      # The image names its user (curl_user) instead of a UID, so
+      # runAsNonRoot needs an explicit one. curl needs no home directory.
       securityContext:
         runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
         seccompProfile:
           type: RuntimeDefault
       containers:
