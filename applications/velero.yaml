@@ -63,6 +63,18 @@ spec:
             data:
               kopia: |
                 {"cacheLimitMB": 1024}
+          # Resource policy of every backup: emptyDir volumes hold
+          # scratch data only and are not copied.
+          policy:
+            data:
+              policy.yaml: |
+                version: v1
+                volumePolicies:
+                  - conditions:
+                      volumeTypes:
+                        - emptyDir
+                    action:
+                      type: skip
         # Daily backup, kept for 7 days. The lab is not always running, so an
         # interval instead of a clock time: an overdue backup runs once
         # Velero is up again.
@@ -70,12 +82,24 @@ spec:
           daily:
             schedule: "@every 24h"
             useOwnerReferencesInBackup: false
+            # just backup in the lab repository copies this template.
             template:
               ttl: 168h0m0s
               storageLocation: default
               includedNamespaces:
                 - "*"
+              # Built by kubeadm and Ansible, not restored by Velero. The
+              # node agent does not run on the control plane either.
+              excludedNamespaces:
+                - kube-system
+                - kube-public
+                - kube-node-lease
+                - calico-system
+                - tigera-operator
               defaultVolumesToFsBackup: true
+              resourcePolicy:
+                kind: configmap
+                name: velero-policy
   destination:
     server: https://kubernetes.default.svc
     namespace: velero
