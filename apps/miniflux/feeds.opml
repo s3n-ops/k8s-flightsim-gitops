@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Starter feeds for Miniflux: technical, neutral, family friendly.
+     Imported after every sync by the Job in import-feeds.yaml. Miniflux
+     skips feeds that already exist. -->
+<opml version="2.0">
+  <head>
+    <title>k8s-flightsim starter feeds</title>
+  </head>
+  <body>
+    <outline text="Cloud Native" title="Cloud Native">
+      <outline type="rss" text="Kubernetes Blog" xmlUrl="https://kubernetes.io/feed.xml" htmlUrl="https://kubernetes.io/blog/"/>
+      <outline type="rss" text="CNCF Blog" xmlUrl="https://www.cncf.io/feed/" htmlUrl="https://www.cncf.io/blog/"/>
+      <outline type="rss" text="Ubuntu Blog" xmlUrl="https://ubuntu.com/blog/feed" htmlUrl="https://ubuntu.com/blog"/>
+      <outline type="rss" text="GitHub Blog" xmlUrl="https://github.blog/feed/" htmlUrl="https://github.blog/"/>
+    </outline>
+    <outline text="Security" title="Security">
+      <outline type="rss" text="heise online English" xmlUrl="https://www.heise.de/rss/heise-en-atom.xml" htmlUrl="https://www.heise.de/en/"/>
+    </outline>
+    <outline text="Languages and Databases" title="Languages and Databases">
+      <outline type="rss" text="The Go Blog" xmlUrl="https://go.dev/blog/feed.atom" htmlUrl="https://go.dev/blog/"/>
+      <outline type="rss" text="Rust Blog" xmlUrl="https://blog.rust-lang.org/feed.xml" htmlUrl="https://blog.rust-lang.org/"/>
+      <outline type="rss" text="PostgreSQL News" xmlUrl="https://www.postgresql.org/news.rss" htmlUrl="https://www.postgresql.org/about/newsarchive/"/>
+    </outline>
+    <outline text="Releases" title="Releases">
+      <outline type="rss" text="Miniflux releases" xmlUrl="https://github.com/miniflux/v2/releases.atom" htmlUrl="https://github.com/miniflux/v2/releases"/>
+      <outline type="rss" text="Argo CD releases" xmlUrl="https://github.com/argoproj/argo-cd/releases.atom" htmlUrl="https://github.com/argoproj/argo-cd/releases"/>
+      <outline type="rss" text="Velero releases" xmlUrl="https://github.com/vmware-tanzu/velero/releases.atom" htmlUrl="https://github.com/vmware-tanzu/velero/releases"/>
+      <outline type="rss" text="CloudNativePG releases" xmlUrl="https://github.com/cloudnative-pg/cloudnative-pg/releases.atom" htmlUrl="https://github.com/cloudnative-pg/cloudnative-pg/releases"/>
+    </outline>
+    <outline text="Science and Making" title="Science and Making">
+      <outline type="rss" text="NASA Astronomy Picture of the Day" xmlUrl="https://apod.nasa.gov/apod.rss" htmlUrl="https://apod.nasa.gov/"/>
+      <outline type="rss" text="Raspberry Pi News" xmlUrl="https://www.raspberrypi.com/news/feed/" htmlUrl="https://www.raspberrypi.com/news/"/>
+    </outline>
+  </body>
+</opml>

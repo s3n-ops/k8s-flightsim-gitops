@@ -33,7 +33,7 @@ flowchart LR
 | -5 | cloudnative-pg | platform | CloudNativePG Helm chart |
 | -4 | gateway | platform | `platform/gateway` |
 | -3 | velero | platform | Velero Helm chart, node agent with Kopia |
-| 0 | miniflux | apps | `apps/miniflux`, PostgreSQL with 3 instances |
+| 0 | miniflux | apps | `apps/miniflux`, PostgreSQL with 3 instances, starter feeds |
 
 A wave starts only after the Applications of the previous wave are
 healthy. Argo CD needs a health check for Applications for that, set in
@@ -76,4 +76,4 @@ MIT, see [LICENSE](LICENSE).
 
 ## AI Disclosure
 
-Development was assisted by AI tools (Claude).
+Development was assisted by AI tools (Claude, OpenCode with OpenRouter, Junie).
