@@ -1,7 +1,8 @@
 # Three instances: one primary, two streaming replicas, spread over the
 # workers. CNPG creates Secret "miniflux-db-app" (key "uri") for the app.
 # Velero skips the pods and volumes: a file copy of a running database is
-# not consistent. After a restore, CNPG creates an empty database.
+# not consistent. The Barman Cloud plugin archives the WAL and takes the
+# base backups instead (object-store.yaml, scheduled-backup.yaml).
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
@@ -11,6 +12,11 @@ spec:
   inheritedMetadata:
     labels:
       velero.io/exclude-from-backup: "true"
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: backup
   storage:
     storageClass: local-path
     size: 2Gi

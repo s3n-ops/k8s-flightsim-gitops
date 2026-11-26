@@ -1,0 +1,22 @@
+# Bucket "cnpg" on the S3 endpoint of the host (rclone, started with the
+# lab). Secret "cnpg-s3" comes from just secrets in the lab repository.
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: backup
+spec:
+  retentionPolicy: 7d
+  configuration:
+    destinationPath: s3://cnpg/
+    endpointURL: http://10.17.3.1:9000
+    s3Credentials:
+      accessKeyId:
+        name: cnpg-s3
+        key: ACCESS_KEY_ID
+      secretAccessKey:
+        name: cnpg-s3
+        key: ACCESS_SECRET_KEY
+    wal:
+      compression: gzip
+    data:
+      compression: gzip

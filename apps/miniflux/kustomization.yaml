@@ -10,6 +10,8 @@ labels:
       app.kubernetes.io/part-of: miniflux
 resources:
   - database.yaml
+  - object-store.yaml
+  - scheduled-backup.yaml
   - deployment.yaml
   - service.yaml
   - route.yaml
