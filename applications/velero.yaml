@@ -1,0 +1,88 @@
+# Velero backs up Kubernetes objects and, with the node agent and Kopia,
+# the contents of volumes. local-path has no CSI snapshots, so volumes are
+# always copied file by file. The backup target is an S3 endpoint outside
+# the cluster (rclone on the host, just backup-target in the lab repo).
+# Secrets velero-s3 and velero-repo-credentials come from just secrets.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: velero
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-3"
+spec:
+  project: platform
+  source:
+    repoURL: https://vmware-tanzu.github.io/helm-charts
+    chart: velero
+    targetRevision: 12.2.4
+    helm:
+      valuesObject:
+        image:
+          tag: v1.18.4
+        initContainers:
+          - name: velero-plugin-for-aws
+            image: velero/velero-plugin-for-aws:v1.14.4
+            volumeMounts:
+              - mountPath: /target
+                name: plugins
+        # Argo CD applies the chart's CRDs itself, the Helm hook job is not needed.
+        upgradeCRDs: false
+        credentials:
+          useSecret: true
+          existingSecret: velero-s3
+        snapshotsEnabled: false
+        deployNodeAgent: true
+        nodeAgent:
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              memory: 1Gi
+        configuration:
+          defaultVolumesToFsBackup: true
+          uploaderType: kopia
+          extraArgs:
+            - --backup-repository-configmap=velero-repository
+          backupStorageLocation:
+            - name: default
+              provider: aws
+              bucket: velero
+              default: true
+              config:
+                region: lab
+                s3ForcePathStyle: "true"
+                s3Url: http://10.17.3.1:9000
+                # rclone does not compute the checksums the AWS SDK sends by default.
+                checksumAlgorithm: ""
+        # Kopia keeps a local cache on each node. The default of 5 GB is too
+        # much for the 30 GB worker disks.
+        configMaps:
+          repository:
+            data:
+              kopia: |
+                {"cacheLimitMB": 1024}
+        # Daily backup, kept for 7 days. The lab is not always running, so an
+        # interval instead of a clock time: an overdue backup runs once
+        # Velero is up again.
+        schedules:
+          daily:
+            schedule: "@every 24h"
+            useOwnerReferencesInBackup: false
+            template:
+              ttl: 168h0m0s
+              storageLocation: default
+              includedNamespaces:
+                - "*"
+              defaultVolumesToFsBackup: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: velero
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

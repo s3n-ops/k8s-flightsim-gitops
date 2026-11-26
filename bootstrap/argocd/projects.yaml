@@ -14,6 +14,7 @@ spec:
     - https://cloudnative-pg.github.io/charts
     - https://charts.jetstack.io
     - registry-1.docker.io/envoyproxy
+    - https://vmware-tanzu.github.io/helm-charts
   destinations:
     - server: https://kubernetes.default.svc
       namespace: argocd
@@ -27,6 +28,8 @@ spec:
       namespace: envoy-gateway-system
     - server: https://kubernetes.default.svc
       namespace: gateway
+    - server: https://kubernetes.default.svc
+      namespace: velero
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace

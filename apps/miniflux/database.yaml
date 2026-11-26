@@ -1,11 +1,16 @@
 # Three instances: one primary, two streaming replicas, spread over the
 # workers. CNPG creates Secret "miniflux-db-app" (key "uri") for the app.
+# Velero skips the pods and volumes: a file copy of a running database is
+# not consistent. After a restore, CNPG creates an empty database.
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: miniflux-db
 spec:
   instances: 3
+  inheritedMetadata:
+    labels:
+      velero.io/exclude-from-backup: "true"
   storage:
     storageClass: local-path
     size: 2Gi
