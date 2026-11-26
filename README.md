@@ -32,6 +32,7 @@ flowchart LR
 | -6 | envoy-gateway | platform | Envoy Gateway Helm chart (OCI), with Gateway API CRDs |
 | -5 | cloudnative-pg | platform | CloudNativePG Helm chart |
 | -4 | gateway | platform | `platform/gateway` |
+| -3 | velero | platform | Velero Helm chart, node agent with Kopia |
 | 0 | miniflux | apps | `apps/miniflux`, PostgreSQL with 3 instances |
 
 A wave starts only after the Applications of the previous wave are
