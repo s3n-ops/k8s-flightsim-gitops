@@ -32,8 +32,9 @@ flowchart LR
 | -6 | envoy-gateway | platform | Envoy Gateway Helm chart (OCI), with Gateway API CRDs |
 | -5 | cloudnative-pg | platform | CloudNativePG Helm chart |
 | -4 | gateway | platform | `platform/gateway` |
+| -4 | barman-cloud | platform | Barman Cloud plugin Helm chart for CloudNativePG |
 | -3 | velero | platform | Velero Helm chart, node agent with Kopia |
-| 0 | miniflux | apps | `apps/miniflux`, PostgreSQL with 3 instances, starter feeds |
+| 0 | miniflux | apps | `apps/miniflux`, PostgreSQL with 3 instances and Barman backups, starter feeds |
 
 A wave starts only after the Applications of the previous wave are
 healthy. Argo CD needs a health check for Applications for that, set in
@@ -65,6 +66,8 @@ redirects.
 | `miniflux-admin` | miniflux | `just secrets` |
 | `miniflux-db-app` | miniflux | CloudNativePG |
 | `lab-intermediate-ca` | cert-manager | `just secrets` |
+| `velero-s3`, `velero-repo-credentials` | velero | `just secrets` |
+| `cnpg-s3` | miniflux | `just secrets` |
 
 ## Bootstrap
 
